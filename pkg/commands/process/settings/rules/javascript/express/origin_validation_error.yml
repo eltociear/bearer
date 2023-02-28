@@ -1,0 +1,38 @@
+patterns:
+  - app.use(cors())
+  - |
+    app.use(cors({ $<...>origin: '*'$<...>}))
+  - pattern: |
+      { $<...>'Access-Control-Allow-Origin': $<USER_INPUT>$<...> }
+    filters:
+      - variable: USER_INPUT
+        detection: javascript_express_origin_validation_error_request_obj
+auxiliary:
+  - id: javascript_express_origin_validation_error_request_obj
+    patterns:
+      - req.params
+      - req.query
+      - req.body
+      - req.cookies
+      - req.headers
+languages:
+  - javascript
+trigger: presence
+severity:
+  default: "low"
+metadata:
+  description: "Missing validation of origin detected."
+  remediation_message: |
+    ## Description
+    Missing or misconfigured validation of a request's origin.
+    For example, using unsanitized user input to set the CORS Origin of an application.
+
+    <!--
+    ## Remediations
+    Coming soon.
+    ## Resources
+    Coming soon.
+    -->
+  cwe_id:
+    - 346
+  id: "javascript_express_origin_validation_error"

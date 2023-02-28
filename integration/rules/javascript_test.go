@@ -69,6 +69,11 @@ func TestJavascriptExpressOpenRedirect(t *testing.T) {
 	getRunner(t).runTest(t, javascriptRulesPath+"express/open_redirect")
 }
 
+func TestJavascriptExpressOriginValidationError(t *testing.T) {
+	t.Parallel()
+	getRunner(t).runTest(t, javascriptRulesPath+"express/origin_validation_error")
+}
+
 func TestJavascriptExpressUnsafeDeserialization(t *testing.T) {
 	t.Parallel()
 	getRunner(t).runTest(t, javascriptRulesPath+"express/unsafe_deserialization")

@@ -1,0 +1,32 @@
+low:
+    - rule:
+        cwe_ids:
+            - "346"
+        id: javascript_express_origin_validation_error
+        description: Missing validation of origin detected.
+        documentation_url: https://docs.bearer.com/reference/rules/javascript_express_origin_validation_error
+      line_number: 1
+      filename: ok_cors_config.js
+      parent_line_number: 1
+      parent_content: |-
+        app.use(
+          cors({
+            origin: "https://mish.bearer.sh"
+          })
+        )
+    - rule:
+        cwe_ids:
+            - "346"
+        id: javascript_express_origin_validation_error
+        description: Missing validation of origin detected.
+        documentation_url: https://docs.bearer.com/reference/rules/javascript_express_origin_validation_error
+      line_number: 18
+      filename: ok_cors_config.js
+      parent_line_number: 18
+      parent_content: |-
+        {
+            'Access-Control-Allow-Origin': req.params.origin,
+            'Access-Control-Allow-Methods': 'POST, GET'
+          }
+
+
