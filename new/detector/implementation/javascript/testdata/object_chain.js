@@ -1,4 +1,9 @@
-logger.error("something went wrong");
+var one = {
+  two: 2,
+  three: 3
+}
+
+one.two
 
 async function run(err) {
   const resp = await this.getResponse({

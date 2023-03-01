@@ -8,6 +8,7 @@ import (
 	"github.com/bearer/bearer/new/language/tree"
 	langtree "github.com/bearer/bearer/new/language/tree"
 	languagetypes "github.com/bearer/bearer/new/language/types"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/exp/slices"
 )
 
@@ -45,6 +46,7 @@ func (evaluator *evaluator) ForTree(
 	detectorType string,
 	followFlow bool,
 ) ([]*types.Detection, error) {
+	log.Error().Msgf("Looking for %s detector type with %s node", detectorType, rootNode.Content())
 	var result []*types.Detection
 
 	if err := rootNode.Walk(func(node *langtree.Node, visitChildren func() error) error {
