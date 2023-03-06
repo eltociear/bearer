@@ -7,6 +7,7 @@ import (
 	"github.com/bearer/bearer/new/language/tree"
 	"github.com/bearer/bearer/pkg/util/stringutil"
 
+	"github.com/bearer/bearer/new/detector/implementation/generic"
 	generictypes "github.com/bearer/bearer/new/detector/implementation/generic/types"
 	languagetypes "github.com/bearer/bearer/new/language/types"
 )
@@ -43,8 +44,8 @@ func New(lang languagetypes.Language) (types.Detector, error) {
 	}
 
 	// class User {
-	//	constructor(name, surname)
-	//	GetName()
+	//   constructor(name, surname)
+	//   GetName()
 	// }
 	classQuery, err := lang.CompileQuery(`
 		(class_declaration
@@ -54,7 +55,7 @@ func New(lang languagetypes.Language) (types.Detector, error) {
 			)
 		) @root`)
 	if err != nil {
-		return nil, fmt.Errorf("error compiling class name query: %s", err)
+		return nil, fmt.Errorf("error compiling class query: %s", err)
 	}
 
 	// user.name
@@ -122,13 +123,10 @@ func (detector *objectDetector) getObject(
 		var name string
 		key := result["key"]
 
-		// {"user": "admin_user"}
-		if key.Type() == "string" {
+		switch key.Type() {
+		case "string": // {"user": "admin_user"}
 			name = stringutil.StripQuotes(key.Content())
-		}
-
-		// { user: "admin_user"}
-		if key.Type() == "property_identifier" {
+		case "property_identifier": // { user: "admin_user"}
 			name = key.Content()
 		}
 
@@ -136,7 +134,7 @@ func (detector *objectDetector) getObject(
 			continue
 		}
 
-		propertyObjects, err := getNonVirtualObjects(evaluator, result["value"])
+		propertyObjects, err := generic.GetNonVirtualObjects(evaluator, result["value"])
 		if err != nil {
 			return nil, err
 		}
@@ -169,14 +167,14 @@ func (detector *objectDetector) getAssignment(
 		return nil, err
 	}
 
-	objects, err := getNonVirtualObjects(evaluator, result["value"])
+	valueObjects, err := generic.GetNonVirtualObjects(evaluator, result["value"])
 	if err != nil {
 		return nil, err
 	}
 
-	var detections []interface{}
-	for _, object := range objects {
-		detections = append(detections, generictypes.Object{
+	var objects []interface{}
+	for _, object := range valueObjects {
+		objects = append(objects, generictypes.Object{
 			IsVirtual: true,
 			Properties: []generictypes.Property{{
 				Name:   result["name"].Content(),
@@ -185,7 +183,7 @@ func (detector *objectDetector) getAssignment(
 		})
 	}
 
-	return detections, nil
+	return objects, nil
 }
 
 func (detector *objectDetector) getClass(node *tree.Node, evaluator types.Evaluator) ([]interface{}, error) {
