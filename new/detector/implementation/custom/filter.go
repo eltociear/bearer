@@ -5,6 +5,7 @@ import (
 
 	"golang.org/x/exp/slices"
 
+	generictypes "github.com/bearer/bearer/new/detector/implementation/generic/types"
 	"github.com/bearer/bearer/new/detector/types"
 	"github.com/bearer/bearer/new/language/tree"
 	languagetypes "github.com/bearer/bearer/new/language/types"
@@ -118,6 +119,32 @@ func matchDetectionFilter(
 		detections, err := evaluateDetections(node, "datatype", true)
 
 		return boolPointer(len(detections) != 0), detections, err
+	}
+
+	if detectorType == "string_literal" {
+		detections, err := evaluateDetections(node, "string", true)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		hasEmptyString := false
+
+		for _, detection := range detections {
+			stringData := detection.Data.(generictypes.String)
+			if stringData.IsLiteral {
+				if stringData.Value != "" {
+					return boolPointer(true), nil, nil
+				}
+
+				hasEmptyString = true
+			}
+		}
+
+		if hasEmptyString {
+			return nil, nil, nil
+		}
+
+		return boolPointer(false), nil, nil
 	}
 
 	hasDetection, err := evaluateHasDetection(node, detectorType)
