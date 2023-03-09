@@ -34,7 +34,7 @@ metadata:
 
     ```javascript
     var path = req.body.path
-    if ['users', 'posts', 'pages'].includes(path) {
+    if (['users', 'posts', 'pages'].includes(path)) {
       return res.render(`${path}/success`)
     }
     ```

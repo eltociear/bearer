@@ -95,25 +95,31 @@ metadata:
 
     ❌ Avoid raw queries, especially those that contain unsanitized user input
     ```javascript
-      sqlite.query("SELECT * FROM users WHERE NAME = " + req.params.username);
+      var sqlite = new Sequelize("sqlite::memory:");
+      sqlite.query("SELECT * FROM users WHERE ID = " + req.params.userId);
     ```
 
-    ✅ Instead, use library methods that sanitize your query input for you.
+    Instead, consider the following approaches when writing SQL queries
 
-    Sequelize example
+    ✅ Validate query input wherever possible
+
     ```javascript
-      const { Op } = require("sequelize");
+      var rawId = req.params.userId
+      if !(/[0-9]+/.test(rawId)) {
+        // input is unexpected; don't make the query
+      }
+    ```
 
-      module.exports= async function(event, context) {
-        await Post.findAll({
-          where: {
-            [Op.or]: [
-              { authorId: event.authorID },
-              { authorId: 13 }
-            ]
-          }
-        });
-      };
+    ✅ Use prepared (or parameterized) statements when querying
+
+    Sequelize example -
+    ```javascript
+      var sqlite = new Sequelize("sqlite::memory:");
+      sqlite.query(
+        "SELECT * FROM users WHERE ID = ?",
+        { replacements: [req.params.userId] },
+        type: sequelize.QueryTypes.SELECT
+      )
     ```
 
     ## Resources
