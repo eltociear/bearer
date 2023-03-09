@@ -39,11 +39,6 @@ metadata:
     ## Resources
 
     - https://expressjs.com/en/advanced/best-practice-security.html
-
-    <!--
-    ## Remediations
-    Coming soon.
-    -->
   cwe_id:
     - 693
   id: javascript_express_reduce_fingerprint

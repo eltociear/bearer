@@ -91,12 +91,34 @@ metadata:
     ## Description
     Including unsanitized data, such as user input or request data, in raw SQL queries makes your application vulnerable to SQL injection attacks.
 
-    <!--
     ## Remediations
-    Coming soon.
+
+    ❌ Avoid raw queries, especially those that contain unsanitized user input
+    ```javascript
+      sqlite.query("SELECT * FROM users WHERE NAME = " + req.params.username);
+    ```
+
+    ✅ Instead, use library methods that sanitize your query input for you.
+
+    Sequelize example
+    ```javascript
+      const { Op } = require("sequelize");
+
+      module.exports= async function(event, context) {
+        await Post.findAll({
+          where: {
+            [Op.or]: [
+              { authorId: event.authorID },
+              { authorId: 13 }
+            ]
+          }
+        });
+      };
+    ```
+
     ## Resources
-    Coming soon.
-    -->
+    - [OWASP SQL injection explained](https://owasp.org/www-community/attacks/SQL_Injection)
+    - [OWASP SQL injection prevention cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
   cwe_id:
     - 89
   id: "javascript_express_sql_injection"
